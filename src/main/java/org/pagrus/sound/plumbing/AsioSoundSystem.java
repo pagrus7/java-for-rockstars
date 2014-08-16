@@ -1,0 +1,71 @@
+package org.pagrus.sound.plumbing;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.pagrus.sound.SoundProcessor;
+
+import com.synthbot.jasiohost.AsioChannel;
+import com.synthbot.jasiohost.AsioDriver;
+import com.synthbot.jasiohost.AsioDriverState;
+
+public class AsioSoundSystem {
+  public static final AsioSoundSystem INSTANCE = new AsioSoundSystem();
+
+  private Set<AsioChannel> activeChannels = new HashSet<AsioChannel>();
+  private AsioDriver asioDriver;
+  private AsioListener listener;
+  private SoundProcessor soundProcessor;
+
+  private AsioSoundSystem() {
+    init();
+  }
+
+  public boolean isRunning() {
+    return asioDriver.getCurrentState().equals(AsioDriverState.RUNNING);
+  }
+
+  private void init() {
+    List<String> driverNameList = AsioDriver.getDriverNames();
+    System.out.println(driverNameList);
+    asioDriver = AsioDriver.getDriver(driverNameList.get(0));
+
+    // create a Set of AsioChannels, defining which input and output channels
+    // will be used
+
+    // configure the ASIO driver to use the given channels
+    AsioChannel inputChannel = asioDriver.getChannelInput(0);
+    AsioChannel rightOutputChannel = asioDriver.getChannelOutput(0);
+    AsioChannel leftOutputChannel = asioDriver.getChannelOutput(1);
+
+    activeChannels.add(inputChannel);
+    activeChannels.add(rightOutputChannel);
+    activeChannels.add(leftOutputChannel);
+
+    System.out.println("buffer size: " + asioDriver.getBufferPreferredSize());
+    System.out.println("sample rate: " + asioDriver.getSampleRate());
+
+    // add an AsioDriverListener in order to receive callbacks from the driver
+    soundProcessor = new SoundProcessor();
+    listener = new AsioListener(inputChannel, leftOutputChannel, rightOutputChannel, asioDriver.getBufferPreferredSize(), soundProcessor);
+    asioDriver.addAsioDriverListener(listener);
+  }
+
+  public void start() {
+    // create the audio buffers and prepare the driver to run
+    asioDriver.createBuffers(activeChannels);
+
+    // start the driver
+    asioDriver.start();
+  }
+
+  public void stop() {
+    asioDriver.returnToState(AsioDriverState.INITIALIZED);
+  }
+
+  public void terminate() {
+    asioDriver.shutdownAndUnloadDriver();
+  }
+
+}
