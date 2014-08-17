@@ -17,8 +17,8 @@ public class Delay {
   }
 
   public double apply(double x) {
-    // TODO - delay needs a "delayed" sound mixed with the original sound.
-    // originalSignalLevel and delayedSignalLevel are the multipliers to consider in the mix
+    x = x * originalSignalLevel + history[idx % bufferSize] * delayedSignalLevel;
+    history[idx++ % bufferSize] = x;
     return x;
   }
 }
