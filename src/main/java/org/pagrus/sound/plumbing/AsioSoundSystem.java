@@ -3,7 +3,7 @@ package org.pagrus.sound.plumbing;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import org.pagrus.sound.SoundProcessor;
 
@@ -70,7 +70,7 @@ public class AsioSoundSystem {
     asioDriver.shutdownAndUnloadDriver();
   }
 
-  public void setSampleSniffer(Consumer<double[]> sniffer) {
+  public void setSampleSniffer(BiConsumer<double[], Long> sniffer) {
     soundProcessor.setSampleSniffer(sniffer);
   }
 }
