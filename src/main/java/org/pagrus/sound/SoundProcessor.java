@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 import org.pagrus.sound.effects.Amplifier;
+import org.pagrus.sound.effects.ClippingDistorion;
+import org.pagrus.sound.effects.Normalizer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
@@ -16,7 +18,9 @@ public class SoundProcessor {
   private TDoubleArrayList sniffedSamplesList;
   long lastSniffedTime;
 
-  private Amplifier amp = new Amplifier(2);
+  private Normalizer preNormalizer = new Normalizer(0.2);
+  private ClippingDistorion distortion = new ClippingDistorion(0.05, 0.25, 2);
+  private Amplifier postAmp = new Amplifier(3);
 
   public SoundProcessor(int bufferSize) {
     sniffedSamples = new double[bufferSize];
@@ -34,13 +38,16 @@ public class SoundProcessor {
     Arrays.stream(inputSamples)
     .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
 
-    .map(amp::apply)
+    .map(preNormalizer::apply)
 
-    .map(d -> Math.signum(d) * Math.min(0.05, Math.abs(d)))
+    .map(distortion::apply)
+
+    .map(postAmp::apply)
 
     .peek(sniffedSamplesList::add)
 
-    .mapToInt(d -> ((int)(d* Integer.MAX_VALUE)))
+    .mapToInt(d -> ((int) (d * Integer.MAX_VALUE)))
+
     .forEach(i -> out.putInt(i));
 
     if (sniffer != null && sampleTime > lastSniffedTime + SNIFFING_INTERVAL) {
