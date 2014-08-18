@@ -8,6 +8,8 @@ import java.util.function.Consumer;
 import org.pagrus.sound.effects.Amplifier;
 import org.pagrus.sound.effects.SoundFileReader;
 import org.pagrus.sound.effects.SoundMixer;
+import org.pagrus.sound.effects.ClippingDistorion;
+import org.pagrus.sound.effects.Normalizer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
@@ -18,8 +20,10 @@ public class SoundProcessor {
   private TDoubleArrayList sniffedSamplesList;
   long lastSniffedTime;
 
-  private Amplifier amp = new Amplifier(2);
-  private SoundMixer track = new SoundMixer(1, 0.3, SoundFileReader.INSTANCE.readAsArray("/my/music/collection/fly-away-fragment.mp3"));
+  private SoundMixer track = new SoundMixer(1, 0.5, SoundFileReader.INSTANCE.readAsArray("/my/music/collection/smoke-on-the-water-fragment.mp3"));
+  private Normalizer preNormalizer = new Normalizer(0.2);
+  private ClippingDistorion distortion = new ClippingDistorion(0.05, 0, 2);
+  private Amplifier postAmp = new Amplifier(3);
 
   public SoundProcessor(int bufferSize) {
     sniffedSamples = new double[bufferSize];
@@ -37,10 +41,12 @@ public class SoundProcessor {
     Arrays.stream(inputSamples)
     .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
 
-    .map(amp::apply)
+    .map(preNormalizer::apply)
 
-    .map(d -> Math.signum(d) * Math.min(0.07, Math.abs(d)))
-    .map(amp::apply)
+    .map(distortion::apply)
+
+    .map(postAmp::apply)
+
     .peek(sniffedSamplesList::add)
 
     .map(track::mix)
