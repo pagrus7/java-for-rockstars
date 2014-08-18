@@ -3,6 +3,7 @@ package org.pagrus.sound.plumbing;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.pagrus.sound.SoundProcessor;
 
@@ -43,12 +44,13 @@ public class AsioSoundSystem {
     activeChannels.add(rightOutputChannel);
     activeChannels.add(leftOutputChannel);
 
-    System.out.println("buffer size: " + asioDriver.getBufferPreferredSize());
+    int bufferSize = asioDriver.getBufferPreferredSize();
+    System.out.println("buffer size: " + bufferSize);
     System.out.println("sample rate: " + asioDriver.getSampleRate());
 
     // add an AsioDriverListener in order to receive callbacks from the driver
-    soundProcessor = new SoundProcessor();
-    listener = new AsioListener(inputChannel, leftOutputChannel, rightOutputChannel, asioDriver.getBufferPreferredSize(), soundProcessor);
+    soundProcessor = new SoundProcessor(bufferSize);
+    listener = new AsioListener(inputChannel, leftOutputChannel, rightOutputChannel, bufferSize, soundProcessor);
     asioDriver.addAsioDriverListener(listener);
   }
 
@@ -68,4 +70,7 @@ public class AsioSoundSystem {
     asioDriver.shutdownAndUnloadDriver();
   }
 
+  public void setSampleSniffer(Consumer<double[]> sniffer) {
+    soundProcessor.setSampleSniffer(sniffer);
+  }
 }
