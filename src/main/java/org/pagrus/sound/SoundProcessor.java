@@ -17,7 +17,6 @@ public class SoundProcessor {
    */
   public void processBuffer(int[] inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
 
-    // TODO - complete the implementation of flanger
     Arrays.stream(inputSamples)
     .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
 

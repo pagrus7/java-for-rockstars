@@ -28,15 +28,7 @@ public class Flanger {
 
 
   public double apply(double x) {
-    // Here. Calculate the historical index, or "how far back the sound to mix with should be picked".
-
-    // Flanger is similar to delay, but the amount of delay is variable: 
-    // - there is a fixed component, "offsetBase"
-    // - and a variable component, which fluctuates up and down between [-offsetDelta, offsetDelta] with a frequency "freq"
-    // the "oscillationStep" is a conveniently precalculated value: 
-    // it indicates how much the sinus argument needs to change for each new sample
-
-    int historicalIdx = (int) (0);  // TODO
+    int historicalIdx = (int) (idx - offsetBase + offsetDelta * Math.sin(idx * oscillationStep));
 
     x = x * originalSignalLevel + history[historicalIdx % bufferSize] * flangerSignalLevel;
     history[idx++ % bufferSize] = x;
