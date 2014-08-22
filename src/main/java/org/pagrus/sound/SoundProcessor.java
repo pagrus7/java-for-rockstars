@@ -31,14 +31,14 @@ public class SoundProcessor {
   public void processBuffer(int[] inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
     sniffedSamplesList.reset();
 
-    // 1. Put samples into the sniffedSamplesList, as they "flow" through the stream. They will show up on UI then.
-    // 2. How about one-liner for basic clipping distortion? Clip samples greater than X. 
-    // UI is helpful to choose the right X. 
-
     Arrays.stream(inputSamples)
     .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
 
     .map(amp::apply)
+
+    .map(d -> Math.signum(d) * Math.min(0.05, Math.abs(d)))
+
+    .peek(sniffedSamplesList::add)
 
     .mapToInt(d -> ((int)(d* Integer.MAX_VALUE)))
     .forEach(i -> out.putInt(i));
