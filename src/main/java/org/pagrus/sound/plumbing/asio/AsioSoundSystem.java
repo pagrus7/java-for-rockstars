@@ -6,13 +6,14 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.pagrus.sound.SoundProcessor;
+import org.pagrus.sound.plumbing.SoundSystem;
 
 import com.synthbot.jasiohost.AsioChannel;
 import com.synthbot.jasiohost.AsioDriver;
 import com.synthbot.jasiohost.AsioDriverState;
 
-public class AsioSoundSystem {
-  public static final AsioSoundSystem INSTANCE = new AsioSoundSystem();
+public class AsioSoundSystem implements SoundSystem {
+  public static final SoundSystem INSTANCE = new AsioSoundSystem();
 
   private Set<AsioChannel> activeChannels = new HashSet<AsioChannel>();
   private AsioDriver asioDriver;
@@ -23,7 +24,7 @@ public class AsioSoundSystem {
     init();
   }
 
-  public boolean isRunning() {
+  boolean isRunning() {
     return asioDriver.getCurrentState().equals(AsioDriverState.RUNNING);
   }
 
@@ -54,6 +55,7 @@ public class AsioSoundSystem {
     asioDriver.addAsioDriverListener(listener);
   }
 
+  @Override
   public void start() {
     // create the audio buffers and prepare the driver to run
     asioDriver.createBuffers(activeChannels);
@@ -62,14 +64,19 @@ public class AsioSoundSystem {
     asioDriver.start();
   }
 
+  @Override
   public void stop() {
     asioDriver.returnToState(AsioDriverState.INITIALIZED);
   }
 
+  @Override
   public void terminate() {
-    asioDriver.shutdownAndUnloadDriver();
+    if (isRunning()) {
+      asioDriver.shutdownAndUnloadDriver();
+    }
   }
 
+  @Override
   public void setSampleSniffer(Consumer<double[]> sniffer) {
     soundProcessor.setSampleSniffer(sniffer);
   }

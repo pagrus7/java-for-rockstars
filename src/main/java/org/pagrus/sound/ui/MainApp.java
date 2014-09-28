@@ -14,11 +14,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import org.pagrus.sound.plumbing.asio.AsioSoundSystem;
+import org.pagrus.sound.plumbing.SoundSystem;
 
 public class MainApp extends Application {
   private static final float[] GRID_LINES = new float[] {0, 0.1f, .2f, .3f,.4f, .5f, .6f, .7f, .8f, .9f};
-  private AsioSoundSystem soundSystem = AsioSoundSystem.INSTANCE;
+  private SoundSystem soundSystem = SoundSystem.get();
   private ToggleButton startButton;
   private Canvas canvas;
 
@@ -93,9 +93,7 @@ public class MainApp extends Application {
 
   @Override
   public void stop() throws Exception {
-    if (soundSystem.isRunning()) {
-      soundSystem.terminate();
-    }
+    soundSystem.terminate();
   }
 
 }
