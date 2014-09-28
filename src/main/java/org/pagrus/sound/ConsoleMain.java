@@ -2,7 +2,7 @@ package org.pagrus.sound;
 
 import java.io.IOException;
 
-import org.pagrus.sound.plumbing.AsioSoundSystem;
+import org.pagrus.sound.plumbing.asio.AsioSoundSystem;
 
 public class ConsoleMain {
 

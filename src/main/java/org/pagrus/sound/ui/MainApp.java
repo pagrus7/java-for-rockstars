@@ -14,7 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import org.pagrus.sound.plumbing.AsioSoundSystem;
+import org.pagrus.sound.plumbing.asio.AsioSoundSystem;
 
 public class MainApp extends Application {
   private static final float[] GRID_LINES = new float[] {0, 0.1f, .2f, .3f,.4f, .5f, .6f, .7f, .8f, .9f};

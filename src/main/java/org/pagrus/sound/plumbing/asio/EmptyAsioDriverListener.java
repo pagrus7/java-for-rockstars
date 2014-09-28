@@ -1,4 +1,4 @@
-package org.pagrus.sound.plumbing;
+package org.pagrus.sound.plumbing.asio;
 
 import java.util.Set;
 

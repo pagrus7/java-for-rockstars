@@ -2,13 +2,13 @@ package org.pagrus.sound;
 
 import gnu.trove.list.array.TDoubleArrayList;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.DoubleStream;
 
 import org.pagrus.sound.effects.Amplifier;
 import org.pagrus.sound.effects.ClippingDistorion;
 import org.pagrus.sound.effects.Normalizer;
-import org.pagrus.sound.plumbing.StereoOut;
+import org.pagrus.sound.plumbing.asio.StereoOut;
 
 public class SoundProcessor {
   private static final long SNIFFING_INTERVAL = 40_000_000; // 40 ms in nanos
@@ -32,11 +32,10 @@ public class SoundProcessor {
    * @param sampleTime system nano time associated with the samples.
    * @param estimatedSampleTimeNanos offset relative to the very first sample, in nanoseconds
    */
-  public void processBuffer(int[] inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
+  public void processBuffer(DoubleStream inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
     sniffedSamplesList.reset();
 
-    Arrays.stream(inputSamples)
-    .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
+    inputSamples
 
     .map(preNormalizer::apply)
 
@@ -46,9 +45,7 @@ public class SoundProcessor {
 
     .peek(sniffedSamplesList::add)
 
-    .mapToInt(d -> ((int) (d * Integer.MAX_VALUE)))
-
-    .forEach(i -> out.putInt(i));
+    .forEach(out :: putSample);
 
     if (sniffer != null && sampleTime > lastSniffedTime + SNIFFING_INTERVAL) {
       sniffer.accept(sniffedSamples);

@@ -1,8 +1,9 @@
-package org.pagrus.sound.plumbing;
+package org.pagrus.sound.plumbing.asio;
 
-import java.nio.ByteBuffer;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 import org.pagrus.sound.SoundProcessor;
 
@@ -12,10 +13,9 @@ public class AsioListener extends EmptyAsioDriverListener {
   private static final int SAMPLE_RATE = 44100;
 
   private AsioChannel inputChannel;
-  private AsioChannel leftOutputChannel;
-  private AsioChannel rightOutputChannel;
+  private StereoOut stereoOut;
 
-  private int[] inputSamples;
+  private float[] inputSamples;
   private SoundProcessor soundProcessor;
   private long bufferCounter;
   private int bufferSize;
@@ -23,24 +23,23 @@ public class AsioListener extends EmptyAsioDriverListener {
   public AsioListener(AsioChannel inputChannel, AsioChannel leftOutputChannel,
       AsioChannel rightOutputChannel, int bufferSize, SoundProcessor soundProcessor) {
     this.inputChannel = inputChannel;
-    this.leftOutputChannel = leftOutputChannel;
-    this.rightOutputChannel = rightOutputChannel;
+    this.stereoOut = new StereoOut(leftOutputChannel, rightOutputChannel,  bufferSize);
     this.bufferSize = bufferSize;
-    inputSamples = new int[bufferSize];
+    inputSamples = new float[bufferSize];
 
     this.soundProcessor = soundProcessor;
   }
 
   @Override
   public void bufferSwitch(long sampleTime, long samplePosition, Set<AsioChannel> activeChannels) {
-    ByteBuffer inputBuffer = inputChannel.getByteBuffer();
-    inputBuffer.asIntBuffer().get(inputSamples);
+    
 
-    StereoOut out = new StereoOut(leftOutputChannel.getByteBuffer(), rightOutputChannel.getByteBuffer());
+    inputChannel.read(inputSamples);
+    DoubleStream stream = IntStream.range(0, bufferSize).mapToDouble(i -> inputSamples[i]);
 
     long estimatedSampleTimeNanos = bufferCounter++ * bufferSize * TimeUnit.SECONDS.toNanos(1) / SAMPLE_RATE;
 
-    soundProcessor.processBuffer(inputSamples, out, sampleTime, estimatedSampleTimeNanos);
+    soundProcessor.processBuffer(stream, stereoOut, sampleTime, estimatedSampleTimeNanos);
   }
 
   @Override
