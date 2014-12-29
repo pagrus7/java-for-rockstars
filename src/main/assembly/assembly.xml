@@ -25,6 +25,7 @@
       <directory>src/main/assembly/bin</directory>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
+      <fileMode>755</fileMode>
     </fileSet>
   </fileSets>
 </assembly>
