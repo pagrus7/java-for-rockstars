@@ -73,6 +73,40 @@
       <version>0.3.7-2</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.jaudiolibs</groupId>
+      <artifactId>audioservers</artifactId>
+      <version>12.09.12</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/lib/org-jaudiolibs-audioservers.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.jaudiolibs</groupId>
+      <artifactId>audidoservers-javasound</artifactId>
+      <version>12.09.12</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/lib/org-jaudiolibs-audioservers-javasound.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.jaudiolibs</groupId>
+      <artifactId>audidoservers-jack</artifactId>
+      <version>12.09.12</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/lib/org-jaudiolibs-audioservers-jack.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.jaudiolibs</groupId>
+      <artifactId>jnajack</artifactId>
+      <version>12.09.12</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/lib/org-jaudiolibs-jnajack.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>4.1.0</version>
+    </dependency>
+
   </dependencies>
 
 </project>
