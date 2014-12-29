@@ -1,19 +1,17 @@
 package org.pagrus.sound.plumbing;
 
-import java.util.function.Consumer;
-
-import org.pagrus.sound.plumbing.asio.AsioSoundSystem;
+import org.pagrus.sound.SoundProcessor;
+import org.pagrus.sound.plumbing.audioservers.AudioServersSoundSystem;
 
 public interface SoundSystem {
-  public void start();
+  public void start(SoundProcessor soundProcessor);
 
   public void stop();
 
   public void terminate();
 
-  public void setSampleSniffer(Consumer<double[]> sniffer);
-
   public static SoundSystem get() {
-    return AsioSoundSystem.INSTANCE;
+    return AudioServersSoundSystem.INSTANCE;
   }
+
 }

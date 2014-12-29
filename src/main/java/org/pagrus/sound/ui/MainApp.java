@@ -14,11 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import org.pagrus.sound.SoundProcessor;
 import org.pagrus.sound.plumbing.SoundSystem;
 
 public class MainApp extends Application {
   private static final float[] GRID_LINES = new float[] {0, 0.1f, .2f, .3f,.4f, .5f, .6f, .7f, .8f, .9f};
   private SoundSystem soundSystem = SoundSystem.get();
+  private SoundProcessor soundProcessor;
   private ToggleButton startButton;
   private Canvas canvas;
 
@@ -33,8 +35,8 @@ public class MainApp extends Application {
     startButton.setPrefWidth(300);
     startButton.setOnAction(e -> startButtonClicked());
 
-    soundSystem.setSampleSniffer(f -> Platform.runLater(() -> refreshChart(f)));
-
+    soundProcessor = new SoundProcessor();
+    soundProcessor.setSampleSniffer(f -> Platform.runLater(() -> refreshChart(f)));
 
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     canvas = new Canvas(screenBounds.getWidth(), screenBounds.getHeight() * .95);
@@ -85,7 +87,7 @@ public class MainApp extends Application {
 
   private void startButtonClicked() {
     if (startButton.isSelected()) {
-      soundSystem.start();
+      soundSystem.start(soundProcessor);
     } else {
       soundSystem.stop();
     }

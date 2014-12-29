@@ -8,10 +8,11 @@ import java.util.stream.DoubleStream;
 import org.pagrus.sound.effects.Amplifier;
 import org.pagrus.sound.effects.ClippingDistorion;
 import org.pagrus.sound.effects.Normalizer;
-import org.pagrus.sound.plumbing.asio.StereoOut;
+import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
   private static final long SNIFFING_INTERVAL = 40_000_000; // 40 ms in nanos
+  private static final int DEFAULT_BUFFER_SIZE = 512;
 
   private double[] sniffedSamples;
   private Consumer<double[]> sniffer;
@@ -22,7 +23,14 @@ public class SoundProcessor {
   private ClippingDistorion distortion = new ClippingDistorion(0.05, 0.25, 2);
   private Amplifier postAmp = new Amplifier(3);
 
-  public SoundProcessor(int bufferSize) {
+  public SoundProcessor() {
+    updateBufferSize(DEFAULT_BUFFER_SIZE);
+  }
+
+  /**
+   * May potentially get invoked by the sound system
+   */
+  public void updateBufferSize(int bufferSize) {
     sniffedSamples = new double[bufferSize];
     sniffedSamplesList = TDoubleArrayList.wrap(sniffedSamples);
   }

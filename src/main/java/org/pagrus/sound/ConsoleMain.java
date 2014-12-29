@@ -8,7 +8,8 @@ public class ConsoleMain {
 
   public static void main(String[] args) throws IOException {
     SoundSystem soundSystem = SoundSystem.get();
-    soundSystem.start();
+    SoundProcessor soundProcessor = new SoundProcessor();
+    soundSystem.start(soundProcessor);
 
     System.in.read();
 
