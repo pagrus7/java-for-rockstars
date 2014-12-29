@@ -3,7 +3,6 @@ package org.pagrus.sound.plumbing.asio;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.pagrus.sound.SoundProcessor;
 import org.pagrus.sound.plumbing.SoundSystem;
@@ -16,9 +15,14 @@ public class AsioSoundSystem implements SoundSystem {
   public static final SoundSystem INSTANCE = new AsioSoundSystem();
 
   private Set<AsioChannel> activeChannels = new HashSet<AsioChannel>();
+  private AsioChannel inputChannel;
+  private AsioChannel rightOutputChannel;
+  private AsioChannel leftOutputChannel;
   private AsioDriver asioDriver;
   private AsioListener listener;
-  private SoundProcessor soundProcessor;
+  private int bufferPreferredSize;
+
+
 
   private AsioSoundSystem() {
     init();
@@ -29,6 +33,7 @@ public class AsioSoundSystem implements SoundSystem {
   }
 
   private void init() {
+
     List<String> driverNameList = AsioDriver.getDriverNames();
     System.out.println(driverNameList);
     asioDriver = AsioDriver.getDriver(driverNameList.get(0));
@@ -37,26 +42,28 @@ public class AsioSoundSystem implements SoundSystem {
     // will be used
 
     // configure the ASIO driver to use the given channels
-    AsioChannel inputChannel = asioDriver.getChannelInput(0);
-    AsioChannel rightOutputChannel = asioDriver.getChannelOutput(0);
-    AsioChannel leftOutputChannel = asioDriver.getChannelOutput(1);
+    inputChannel = asioDriver.getChannelInput(0);
+    rightOutputChannel = asioDriver.getChannelOutput(0);
+    leftOutputChannel = asioDriver.getChannelOutput(1);
 
     activeChannels.add(inputChannel);
     activeChannels.add(rightOutputChannel);
     activeChannels.add(leftOutputChannel);
 
-    int bufferSize = asioDriver.getBufferPreferredSize();
-    System.out.println("buffer size: " + bufferSize);
+    bufferPreferredSize = asioDriver.getBufferPreferredSize();
+    System.out.println("buffer size: " + bufferPreferredSize);
     System.out.println("sample rate: " + asioDriver.getSampleRate());
 
-    // add an AsioDriverListener in order to receive callbacks from the driver
-    soundProcessor = new SoundProcessor(bufferSize);
-    listener = new AsioListener(inputChannel, leftOutputChannel, rightOutputChannel, bufferSize, soundProcessor);
-    asioDriver.addAsioDriverListener(listener);
   }
 
   @Override
-  public void start() {
+  public void start(SoundProcessor soundProcessor) {
+    soundProcessor.updateBufferSize(bufferPreferredSize);
+
+    // add an AsioDriverListener in order to receive callbacks from the driver
+    listener = new AsioListener(inputChannel, leftOutputChannel, rightOutputChannel, bufferPreferredSize, soundProcessor);
+    asioDriver.addAsioDriverListener(listener);
+
     // create the audio buffers and prepare the driver to run
     asioDriver.createBuffers(activeChannels);
 
@@ -67,6 +74,7 @@ public class AsioSoundSystem implements SoundSystem {
   @Override
   public void stop() {
     asioDriver.returnToState(AsioDriverState.INITIALIZED);
+    asioDriver.removeAsioDriverListener(listener);
   }
 
   @Override
@@ -76,8 +84,4 @@ public class AsioSoundSystem implements SoundSystem {
     }
   }
 
-  @Override
-  public void setSampleSniffer(Consumer<double[]> sniffer) {
-    soundProcessor.setSampleSniffer(sniffer);
-  }
 }

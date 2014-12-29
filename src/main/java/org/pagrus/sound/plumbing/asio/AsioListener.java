@@ -6,6 +6,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 import org.pagrus.sound.SoundProcessor;
+import org.pagrus.sound.plumbing.StereoOut;
 
 import com.synthbot.jasiohost.AsioChannel;
 
@@ -23,7 +24,7 @@ public class AsioListener extends EmptyAsioDriverListener {
   public AsioListener(AsioChannel inputChannel, AsioChannel leftOutputChannel,
       AsioChannel rightOutputChannel, int bufferSize, SoundProcessor soundProcessor) {
     this.inputChannel = inputChannel;
-    this.stereoOut = new StereoOut(leftOutputChannel, rightOutputChannel,  bufferSize);
+    this.stereoOut = new AsioStereoOut(leftOutputChannel, rightOutputChannel,  bufferSize);
     this.bufferSize = bufferSize;
     inputSamples = new float[bufferSize];
 
