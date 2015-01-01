@@ -1,3 +1,3 @@
 set LIBS=../classes
-cd target/sound-distro
+cd target/java-for-rockstars-distro
 run-ui
