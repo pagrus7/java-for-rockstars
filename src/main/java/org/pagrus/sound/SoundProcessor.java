@@ -2,6 +2,7 @@ package org.pagrus.sound;
 
 import gnu.trove.list.array.TDoubleArrayList;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.DoubleStream;
 
@@ -11,7 +12,7 @@ import org.pagrus.sound.effects.Normalizer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
-  private static final long SNIFFING_INTERVAL = 40_000_000; // 40 ms in nanos
+  private static final long SNIFFING_INTERVAL = TimeUnit.MILLISECONDS.toNanos(40);
   private static final int DEFAULT_BUFFER_SIZE = 512;
 
   private double[] sniffedSamples;
