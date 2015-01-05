@@ -1,5 +1,8 @@
 package org.pagrus.sound.ui;
 
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -36,7 +39,7 @@ public class MainApp extends Application {
     startButton.setOnAction(e -> startButtonClicked());
 
     soundProcessor = new SoundProcessor();
-    soundProcessor.setSampleSniffer(f -> Platform.runLater(() -> refreshChart(f)));
+    soundProcessor.setSampleSniffer(new RenderingSniffer());
 
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     canvas = new Canvas(screenBounds.getWidth(), screenBounds.getHeight() * .95);
@@ -96,6 +99,21 @@ public class MainApp extends Application {
   @Override
   public void stop() throws Exception {
     soundSystem.terminate();
+  }
+
+  private class RenderingSniffer implements Consumer<double[]> {
+    private final long REFRESH_INTERVAL = TimeUnit.MILLISECONDS.toNanos(40);
+    private long lastSniffedTime;
+
+    @Override
+    public void accept(double[] values) {
+      long nanoTime = System.nanoTime();
+      if (nanoTime > lastSniffedTime + REFRESH_INTERVAL) {
+        Platform.runLater(() -> refreshChart(values));
+        lastSniffedTime = nanoTime;
+      }
+    }
+
   }
 
 }

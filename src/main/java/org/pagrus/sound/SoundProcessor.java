@@ -2,7 +2,6 @@ package org.pagrus.sound;
 
 import gnu.trove.list.array.TDoubleArrayList;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.DoubleStream;
 
@@ -12,13 +11,11 @@ import org.pagrus.sound.effects.Normalizer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
-  private static final long SNIFFING_INTERVAL = TimeUnit.MILLISECONDS.toNanos(40);
   private static final int DEFAULT_BUFFER_SIZE = 512;
 
   private double[] sniffedSamples;
   private Consumer<double[]> sniffer = d -> {};
   private TDoubleArrayList sniffedSamplesList;
-  long lastSniffedTime;
 
   private Normalizer preNormalizer = new Normalizer(0.2);
   private ClippingDistorion distortion = new ClippingDistorion(0.05, 0.25, 2);
@@ -55,10 +52,7 @@ public class SoundProcessor {
 
     .forEach(out :: putSample);
 
-    if (sampleTime > lastSniffedTime + SNIFFING_INTERVAL) {
-      sniffer.accept(sniffedSamples);
-      lastSniffedTime = sampleTime;
-    }
+    sniffer.accept(sniffedSamples);
   }
 
   public void setSampleSniffer(Consumer<double[]> sniffer) {
