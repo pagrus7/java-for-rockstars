@@ -15,7 +15,7 @@ public class SoundProcessor {
   private static final int DEFAULT_BUFFER_SIZE = 512;
 
   private double[] sniffedSamples;
-  private Consumer<double[]> sniffer;
+  private Consumer<double[]> sniffer = d -> {};
   private TDoubleArrayList sniffedSamplesList;
   long lastSniffedTime;
 
@@ -54,7 +54,7 @@ public class SoundProcessor {
 
     .forEach(out :: putSample);
 
-    if (sniffer != null && sampleTime > lastSniffedTime + SNIFFING_INTERVAL) {
+    if (sampleTime > lastSniffedTime + SNIFFING_INTERVAL) {
       sniffer.accept(sniffedSamples);
       lastSniffedTime = sampleTime;
     }
