@@ -38,9 +38,8 @@ public class SoundProcessor {
   /**
    * Process a single buffer of sound samples and write results to<code>out</code>. 
    * @param sampleTime system nano time associated with the samples.
-   * @param estimatedSampleTimeNanos offset relative to the very first sample, in nanoseconds
    */
-  public void processBuffer(DoubleStream inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
+  public void processBuffer(DoubleStream inputSamples, StereoOut out, long sampleTime) {
     sniffedSamplesList.reset();
 
     inputSamples

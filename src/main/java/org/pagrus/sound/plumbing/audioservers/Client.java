@@ -33,7 +33,7 @@ public class Client implements AudioClient {
 
 
     DoubleStream doubleStream = IntStream.range(0, bufferSize).mapToDouble(i -> buffer[i]);
-    soundProcessor.processBuffer(doubleStream, out, time, 0);
+    soundProcessor.processBuffer(doubleStream, out, time);
 
     return true;
   }
