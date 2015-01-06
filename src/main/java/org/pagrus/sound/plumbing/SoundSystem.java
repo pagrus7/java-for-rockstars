@@ -27,7 +27,7 @@ public interface SoundSystem {
         Field instanceField = clazz.getDeclaredField("INSTANCE");
         SoundSystem instance = (SoundSystem) instanceField.get(null);
         return instance;
-      } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+      } catch (Throwable t) {
         System.out.println("Could not initialize " + className);
       }
     }
