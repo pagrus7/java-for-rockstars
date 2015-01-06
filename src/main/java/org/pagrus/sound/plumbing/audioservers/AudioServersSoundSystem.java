@@ -19,8 +19,8 @@ public class AudioServersSoundSystem implements SoundSystem, Runnable {
 
   private void init() {
     System.out.println("Initializing Jack audio server");
-    AudioConfiguration context = new AudioConfiguration(BIT_RATE, 1, 2, MAX_BUFFER_SIZE, true);
-    server = JackAudioServer.create("Java", context, true, audioClient);
+    AudioConfiguration config = new AudioConfiguration(BIT_RATE, 1, 2, MAX_BUFFER_SIZE, true);
+    server = JackAudioServer.create("Java", config, true, audioClient);
   }
 
   @Override
