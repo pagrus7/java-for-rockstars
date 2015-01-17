@@ -16,13 +16,11 @@ public class SoundProcessor {
    */
   public void processBuffer(int[] inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
 
-    // TODO #1 - complete the SoundMixer implementation
-
     Arrays.stream(inputSamples)
     .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
     .map(i -> i * 2)
 
-    // TODO #2 - apply track here
+    .map(d -> track.mix(d))
 
     .mapToInt(d -> ((int)(d * Integer.MAX_VALUE)))
     .forEach(i -> out.putInt(i));
