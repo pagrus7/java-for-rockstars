@@ -2,9 +2,12 @@ package org.pagrus.sound;
 
 import java.util.Arrays;
 
+import org.pagrus.sound.effects.SoundFileReader;
+import org.pagrus.sound.effects.SoundMixer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
+  private SoundMixer track = new SoundMixer(1.0, 0.3, SoundFileReader.INSTANCE.readAsArray("/my/music/collection/lily-was-here-fragment.mp3"));
 
   /**
    * Process a single buffer of sound samples and write results to<code>out</code>. 
@@ -13,16 +16,16 @@ public class SoundProcessor {
    */
   public void processBuffer(int[] inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
 
-    // 1. Replace "for" with streams and lambdas. [done]
-    // 2. Hey, the sound is quiet. Can you make it twice as loud?
-    // 3. How about parallel streams?
-    // 4. Translate samples to [-1, 1] - will need for effects
+    // TODO #1 - complete the SoundMixer implementation
 
     Arrays.stream(inputSamples)
+    .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
+    .map(i -> i * 2)
+
+    // TODO #2 - apply track here
+
+    .mapToInt(d -> ((int)(d * Integer.MAX_VALUE)))
     .forEach(i -> out.putInt(i));
 
-//    for (int i : inputSamples) {
-//      out.putInt(i);
-//    }
   }
 }
