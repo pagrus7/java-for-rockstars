@@ -31,28 +31,31 @@ public class AsioSoundSystem {
     System.out.println(driverNameList);
     asioDriver = AsioDriver.getDriver(driverNameList.get(0));
 
-    // create a Set of AsioChannels, defining which input and output channels
+
+
+    System.out.println("buffer size: " + asioDriver.getBufferPreferredSize());
+    System.out.println("sample rate: " + asioDriver.getSampleRate());
+
+    soundProcessor = new SoundProcessor();
+  }
+
+  public void start() {
+    // create a Set of AsioChannels, defining which input and output channels 
     // will be used
 
     // configure the ASIO driver to use the given channels
     AsioChannel inputChannel = asioDriver.getChannelInput(0);
     AsioChannel rightOutputChannel = asioDriver.getChannelOutput(0);
     AsioChannel leftOutputChannel = asioDriver.getChannelOutput(1);
-
+    
     activeChannels.add(inputChannel);
     activeChannels.add(rightOutputChannel);
     activeChannels.add(leftOutputChannel);
 
-    System.out.println("buffer size: " + asioDriver.getBufferPreferredSize());
-    System.out.println("sample rate: " + asioDriver.getSampleRate());
-
     // add an AsioDriverListener in order to receive callbacks from the driver
-    soundProcessor = new SoundProcessor();
     listener = new AsioListener(inputChannel, leftOutputChannel, rightOutputChannel, asioDriver.getBufferPreferredSize(), soundProcessor);
     asioDriver.addAsioDriverListener(listener);
-  }
 
-  public void start() {
     // create the audio buffers and prepare the driver to run
     asioDriver.createBuffers(activeChannels);
 
@@ -62,9 +65,13 @@ public class AsioSoundSystem {
 
   public void stop() {
     asioDriver.returnToState(AsioDriverState.INITIALIZED);
+    asioDriver.removeAsioDriverListener(listener);
   }
 
   public void terminate() {
+    if (isRunning()) {
+      stop();
+    }
     asioDriver.shutdownAndUnloadDriver();
   }
 
