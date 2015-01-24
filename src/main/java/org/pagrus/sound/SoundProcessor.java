@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 import org.pagrus.sound.effects.Amplifier;
+import org.pagrus.sound.effects.SoundFileReader;
+import org.pagrus.sound.effects.SoundMixer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
@@ -17,6 +19,7 @@ public class SoundProcessor {
   long lastSniffedTime;
 
   private Amplifier amp = new Amplifier(2);
+  private SoundMixer track = new SoundMixer(1, 0.3, SoundFileReader.INSTANCE.readAsArray("/my/music/collection/fly-away-fragment.mp3"));
 
   public SoundProcessor(int bufferSize) {
     sniffedSamples = new double[bufferSize];
@@ -31,14 +34,17 @@ public class SoundProcessor {
   public void processBuffer(int[] inputSamples, StereoOut out, long sampleTime, long estimatedSampleTimeNanos) {
     sniffedSamplesList.reset();
 
-    // 1. Put samples into the sniffedSamplesList, as they "flow" through the stream. They will show up on UI then.
-    // 2. How about one-liner for basic clipping distortion? Clip samples greater than X. 
-    // UI is helpful to choose the right X. 
-
     Arrays.stream(inputSamples)
     .mapToDouble(i -> ((double) i / Integer.MAX_VALUE))
 
     .map(amp::apply)
+
+    .map(d -> Math.signum(d) * Math.min(0.1, Math.abs(d)))
+    .map(amp::apply)
+    .peek(sniffedSamplesList::add)
+
+    .map(track::mix)
+
 
     .mapToInt(d -> ((int)(d * Integer.MAX_VALUE)))
     .forEach(out::putInt);
