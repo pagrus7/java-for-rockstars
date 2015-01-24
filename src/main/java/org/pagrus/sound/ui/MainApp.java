@@ -1,5 +1,8 @@
 package org.pagrus.sound.ui;
 
+import java.time.Duration;
+import java.util.function.Consumer;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -10,17 +13,30 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import org.pagrus.sound.plumbing.AsioSoundSystem;
+import org.pagrus.sound.tone.OverTimeSelector;
 
 public class MainApp extends Application {
-  private static final float[] GRID_LINES = new float[] {0, 0.1f, .2f, .3f,.4f, .5f, .6f, .7f, .8f, .9f};
   private AsioSoundSystem soundSystem = AsioSoundSystem.INSTANCE;
   private ToggleButton startButton;
   private Canvas canvas;
+
+  private OverTimeSelector<Consumer<Canvas>> styleSelector; 
+
+  public MainApp() {
+    RegularStyle regularStyle = new RegularStyle();
+    MotionBlurStyle motionBlurStyle = new MotionBlurStyle();
+    PerspectiveAndBlurStyle perspectiveAndBlurStyle = new PerspectiveAndBlurStyle();
+
+    styleSelector = OverTimeSelector
+        .<Consumer<Canvas>> startWith(regularStyle)
+        .thenAt(Duration.parse("PT14.3S"), motionBlurStyle)
+        .thenAt(Duration.parse("PT27.7S"), perspectiveAndBlurStyle)
+        .build();
+  }
 
   @Override
   public void start(Stage stage) throws Exception {
@@ -33,7 +49,7 @@ public class MainApp extends Application {
     startButton.setPrefWidth(300);
     startButton.setOnAction(e -> startButtonClicked());
 
-    soundSystem.setSampleSniffer(f -> Platform.runLater(() -> refreshChart(f)));
+    soundSystem.setSampleSniffer((samples, timeNanos) -> Platform.runLater(() -> refreshChart(samples, timeNanos)));
 
 
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -48,17 +64,17 @@ public class MainApp extends Application {
     stage.show();
   }
 
-  private void refreshChart(double[] samples) {
+  private void refreshChart(double[] samples, long songTimeNanos) {
+    styleSelector.forTime(songTimeNanos).accept(canvas);
+
     GraphicsContext g = canvas.getGraphicsContext2D();
     double w = canvas.getWidth();
     double h = canvas.getHeight();
 
     double xStep = w / samples.length;
 
-    g.setFill(Color.WHITE);
-    g.fillRect(0, 0, w, h);
 
-    g.setStroke(Color.GREEN);
+    g.fillRect(0, 0, w, h);
     g.setLineWidth(5);
 
     double x = 0;
@@ -67,20 +83,6 @@ public class MainApp extends Application {
       x += xStep;
     }
 
-    drawHorizontalGrid(g, w, h);
-  }
-
-  private void drawHorizontalGrid(GraphicsContext g, double w, double h) {
-    g.setStroke(Color.GRAY);
-    g.setLineWidth(2);
-
-    for (float f : GRID_LINES) {
-      double dy = f * h/2;
-      g.strokeLine(0, h/2 + dy, w, h/2 + dy);
-      g.strokeText(String.valueOf(f), 10, h/2 + dy - 5);
-      g.strokeLine(0, h/2 - dy, w, h/2 - dy);
-      g.strokeText(String.valueOf(f), 10, h/2 - dy - 5);
-    }
   }
 
   private void startButtonClicked() {
