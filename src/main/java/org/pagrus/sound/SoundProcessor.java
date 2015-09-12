@@ -18,7 +18,7 @@ public class SoundProcessor {
   private TDoubleArrayList sniffedSamplesList;
 
   private Normalizer preNormalizer = new Normalizer(0.2);
-  private ClippingDistorion distortion = new ClippingDistorion(0.05, 0.25, 2);
+  private ClippingDistorion distortion = new ClippingDistorion(0.05, 0, 2);
   private Amplifier postAmp = new Amplifier(3);
 
   public SoundProcessor() {
