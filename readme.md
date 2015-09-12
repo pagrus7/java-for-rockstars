@@ -35,3 +35,12 @@ Linux users
 ===========
 Start jackd directly via command line or via qjackctl (click a "Start" button). Once jackd is up and running, start the program itself. In case of audio glitches, check if jackd messages report XRUNs. If so, try more conservative settings and google for advice on minimizing XRUNs.  
 
+MacOS users
+===========
+JACK Audio Connection Kit provides OS X distributions at http://jackaudio.org/downloads/  
+Getting qjackctl to run might be tricky, but command line works just fine. These three commands would provide more details on jackd command-line params
+
+jackd --help  
+jackd -d coreaudio --help  
+jackd -d coreaudio --list-devices  
+
