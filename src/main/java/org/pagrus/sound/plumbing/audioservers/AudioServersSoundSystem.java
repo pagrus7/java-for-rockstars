@@ -13,18 +13,12 @@ public class AudioServersSoundSystem implements SoundSystem, Runnable {
   private AudioServer server;
   private Client audioClient = new Client();
 
-  private AudioServersSoundSystem() {
-    init();
-  }
-
-  private void init() {
+  @Override
+  public void start(SoundProcessor soundProcessor) {
     System.out.println("Initializing Jack audio server");
     AudioConfiguration config = new AudioConfiguration(BIT_RATE, 1, 2, MAX_BUFFER_SIZE, true);
     server = JackAudioServer.create("Java", config, true, audioClient);
-  }
 
-  @Override
-  public void start(SoundProcessor soundProcessor) {
     audioClient.setSoundProcessor(soundProcessor);
     Thread audioThread = new Thread(this);
     audioThread.setDaemon(true);
@@ -39,7 +33,9 @@ public class AudioServersSoundSystem implements SoundSystem, Runnable {
 
   @Override
   public void terminate() {
-    server.shutdown();
+    if (server != null) {
+      server.shutdown();
+    }
   }
 
   @Override
