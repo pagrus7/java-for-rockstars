@@ -33,7 +33,7 @@ public class SoundProcessor {
   public void processBuffer(DoubleStream input, StereoOut out, long sampleTime) {
     input
       .map(d -> d * 2)
-      // TODO: apply sound mixer here
+      .map(d -> track.mix(d))
       .forEach(d -> out.putSample(d));
     }
 

@@ -15,9 +15,10 @@ public class SoundMixer {
     this.samples = samples;
   }
 
-
   public double mix(double input) {
-    // TODO - mix samples into the input. Use inputLevel and mixedLevel for weighted sum. 
-    return input;
+    if (index >= samples.length) {
+      return input;
+    }
+    return input * inputLevel + samples[index++] * mixedLevel;
   }
 }
