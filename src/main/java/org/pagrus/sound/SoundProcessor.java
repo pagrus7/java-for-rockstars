@@ -24,8 +24,10 @@ public class SoundProcessor {
    * @param sampleTime system nano time associated with the samples.
    */
   public void processBuffer(DoubleStream input, StereoOut out, long sampleTime) {
-    // TODO: put each element from the input to "out"
-  }
+    input
+      .map(d -> d * 2)
+      .forEach(d -> out.putSample(d));
+    }
 
   public void setSampleSniffer(Consumer<double[]> sniffer) {
     this.sniffer = sniffer;
