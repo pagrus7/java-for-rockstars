@@ -5,6 +5,8 @@ import java.util.stream.DoubleStream;
 
 import org.pagrus.sound.effects.Amplifier;
 import org.pagrus.sound.effects.Flanger;
+import org.pagrus.sound.effects.SoundFileReader;
+import org.pagrus.sound.effects.SoundMixer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 public class SoundProcessor {
@@ -12,7 +14,10 @@ public class SoundProcessor {
   private Consumer<double[]> sniffer = d -> {};
 
   private Amplifier amp = new Amplifier(2);
-  private Flanger flanger = new Flanger(3, 1, 1, 1, 0.5);
+  private Flanger flanger = new Flanger(4, 1, 2, 1, 0.5);
+  private SoundMixer track = new SoundMixer(1, 1,
+      SoundFileReader.INSTANCE.readAsArray(System.getenv("HOME") + "/personal/music/collection/come-as-you-are-E-fragment.mp3"));
+
 
   public SoundProcessor() {
     updateBufferSize(DEFAULT_BUFFER_SIZE);
@@ -32,6 +37,7 @@ public class SoundProcessor {
     input
       .map(amp::amplify)
       .map(flanger::apply)
+      .map(track::mix)
       .forEach(out::putSample);
     }
 
