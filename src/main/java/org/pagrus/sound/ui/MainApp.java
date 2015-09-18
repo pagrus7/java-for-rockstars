@@ -59,6 +59,7 @@ public class MainApp extends Application {
     double h = canvas.getHeight();
 
     double xStep = w / samples.length;
+    g.setLineWidth(xStep - 1);
 
     g.setFill(Color.WHITE);
     g.fillRect(0, 0, w, h);
