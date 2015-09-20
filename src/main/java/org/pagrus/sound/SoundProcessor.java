@@ -1,32 +1,40 @@
 package org.pagrus.sound;
 
-import java.util.function.Consumer;
+import java.time.Duration;
+import java.util.function.BiConsumer;
 import java.util.stream.DoubleStream;
 
-import org.pagrus.sound.effects.Amplifier;
-import org.pagrus.sound.effects.ClippingDistorion;
-import org.pagrus.sound.effects.Normalizer;
 import org.pagrus.sound.effects.SoundFileReader;
 import org.pagrus.sound.effects.SoundMixer;
 import org.pagrus.sound.plumbing.StereoOut;
+import org.pagrus.sound.tone.CleanRythm;
+import org.pagrus.sound.tone.DistortedSolo;
+import org.pagrus.sound.tone.OverTimeSelector;
+import org.pagrus.sound.tone.Tone;
 
 import gnu.trove.list.array.TDoubleArrayList;
 
 public class SoundProcessor {
   private static final int DEFAULT_BUFFER_SIZE = 512;
 
-  private Consumer<double[]> sniffer = d -> {};
+  private BiConsumer<double[], Long> sniffer = (d, t) -> {};
   private double[] sniffed;
   private TDoubleArrayList sniffedList;
 
-  private SoundMixer track = new SoundMixer(1, 0.5,
-      SoundFileReader.INSTANCE.readAsArray(System.getenv("HOME") + "/personal/music/collection/smoke-on-the-water-fragment.mp3"));
-  private Normalizer preNormalizer = new Normalizer(0.2);
-  private ClippingDistorion distortion = new ClippingDistorion(0.05, 0, 2);
-  private Amplifier postAmp = new Amplifier(2);
+  private OverTimeSelector<Tone> toneSelector;
+  private SoundMixer track = new SoundMixer(1.0, 1.0, 
+      SoundFileReader.INSTANCE.readAsArray(System.getenv("HOME") + "/personal/music/collection/nickelback-rockstar-fragment.mp3"));
 
   public SoundProcessor() {
     updateBufferSize(DEFAULT_BUFFER_SIZE);
+
+    Tone clean = new CleanRythm();
+    Tone distorted = new DistortedSolo();
+    toneSelector = OverTimeSelector
+        .startWith(clean)
+        .thenAt(Duration.parse("PT14.1S"), distorted)
+        .thenAt(Duration.parse("PT46.7S"), clean)
+        .build();
   }
 
   /**
@@ -43,22 +51,17 @@ public class SoundProcessor {
    */
   public void processBuffer(DoubleStream input, StereoOut out, long sampleTime) {
     sniffedList.reset();
-
-    input
-      .map(preNormalizer::apply)
-      .map(distortion::apply)
-      .map(postAmp::amplify)
-
+    toneSelector.forTime(sampleTime)
+      .with(input)
       .peek(sniffedList::add)
-
       .map(track::mix)
 
       .forEach(out::putSample);
 
-    sniffer.accept(sniffed);
+    sniffer.accept(sniffed, sampleTime);
   }
 
-  public void setSampleSniffer(Consumer<double[]> sniffer) {
+  public void setSampleSniffer(BiConsumer<double[], Long> sniffer) {
     this.sniffer = sniffer;
   }
 }
