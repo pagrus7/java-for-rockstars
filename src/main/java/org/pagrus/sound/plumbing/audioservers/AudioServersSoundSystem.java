@@ -9,14 +9,14 @@ import org.pagrus.sound.plumbing.SoundSystem;
 public class AudioServersSoundSystem implements SoundSystem, Runnable {
   public static final SoundSystem INSTANCE = new AudioServersSoundSystem();
   private static final int MAX_BUFFER_SIZE = 512;
-  private static final int BIT_RATE = 44100;
+  private static final int SAMPLING_RATE = 44100;
   private AudioServer server;
   private Client audioClient = new Client();
 
   @Override
   public void start(SoundProcessor soundProcessor) {
     System.out.println("Initializing Jack audio server");
-    AudioConfiguration config = new AudioConfiguration(BIT_RATE, 1, 2, MAX_BUFFER_SIZE, true);
+    AudioConfiguration config = new AudioConfiguration(SAMPLING_RATE, 1, 2, MAX_BUFFER_SIZE, true);
     server = JackAudioServer.create("Java", config, true, audioClient);
 
     audioClient.setSoundProcessor(soundProcessor);
