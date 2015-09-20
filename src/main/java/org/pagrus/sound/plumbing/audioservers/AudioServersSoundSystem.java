@@ -9,7 +9,7 @@ import org.pagrus.sound.plumbing.SoundSystem;
 public class AudioServersSoundSystem implements SoundSystem, Runnable {
   public static final SoundSystem INSTANCE = new AudioServersSoundSystem();
   private static final int MAX_BUFFER_SIZE = 512;
-  private static final int SAMPLING_RATE = 44100;
+  public static final int SAMPLING_RATE = 44100;
   private AudioServer server;
   private Client audioClient = new Client();
 

@@ -2,6 +2,7 @@ package org.pagrus.sound.plumbing.audioservers;
 
 import java.nio.FloatBuffer;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
@@ -13,6 +14,7 @@ public class Client implements AudioClient {
   int bufferSize;
   float[] buffer;
   private SoundProcessor soundProcessor;
+  long frameCounter;
 
   @Override
   public void configure(AudioConfiguration config) throws Exception {
@@ -33,7 +35,8 @@ public class Client implements AudioClient {
 
 
     DoubleStream doubleStream = IntStream.range(0, bufferSize).mapToDouble(i -> buffer[i]);
-    soundProcessor.processBuffer(doubleStream, out, time);
+    soundProcessor.processBuffer(doubleStream, out, TimeUnit.SECONDS.toNanos(1) / AudioServersSoundSystem.SAMPLING_RATE * frameCounter);
+    frameCounter += nframes;
 
     return true;
   }
