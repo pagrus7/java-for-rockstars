@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.stream.DoubleStream;
 
 import org.pagrus.sound.effects.Amplifier;
+import org.pagrus.sound.effects.SoundFileReader;
+import org.pagrus.sound.effects.SoundMixer;
 import org.pagrus.sound.plumbing.StereoOut;
 
 import gnu.trove.list.array.TDoubleArrayList;
@@ -15,7 +17,9 @@ public class SoundProcessor {
   private double[] sniffed;
   private TDoubleArrayList sniffedList;
 
-  private Amplifier amp = new Amplifier(2);
+  private SoundMixer track = new SoundMixer(1, 0.5, 
+      SoundFileReader.INSTANCE.readAsArray(System.getenv("HOME") + "/personal/music/collection/pretty-fly-for-a-white-guy-fragment.mp3"));
+  private Amplifier amp = new Amplifier(1.8);
 
   public SoundProcessor() {
     updateBufferSize(DEFAULT_BUFFER_SIZE);
@@ -36,12 +40,14 @@ public class SoundProcessor {
   public void processBuffer(DoubleStream input, StereoOut out, long sampleTime) {
     sniffedList.reset();
 
-    // 1. Put samples into the sniffedList, as they "flow" through the stream. They will show up on UI then.
-    // 2. How about one-liner for basic clipping distortion? Clip samples greater than X. 
-    // UI is helpful for choosing the right X. 
-
     input
       .map(amp::amplify)
+      .map(d -> Math.signum(d) * Math.min(0.12, Math.abs(d)))
+      .map(amp::amplify)
+      .peek(sniffedList::add)
+
+      .map(track::mix)
+
       .forEach(out::putSample);
 
     sniffer.accept(sniffed);
