@@ -28,14 +28,15 @@ public class AudioServersSoundSystem implements SoundSystem, Runnable {
 
   @Override
   public void stop() {
-    server.shutdown();
+    if (server != null) {
+      server.shutdown();
+      server = null;
+    }
   }
 
   @Override
   public void terminate() {
-    if (server != null) {
-      server.shutdown();
-    }
+    stop();
   }
 
   @Override
