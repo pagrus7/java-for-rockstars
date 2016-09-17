@@ -13,6 +13,7 @@ import org.pagrus.sound.tone.OverTimeSelector;
 import org.pagrus.sound.tone.Tone;
 
 import gnu.trove.list.array.TDoubleArrayList;
+import rx.Observable;
 
 public class SoundProcessor {
   private static final int DEFAULT_BUFFER_SIZE = 512;
@@ -49,14 +50,13 @@ public class SoundProcessor {
    * Process a stream of input samples and write results to<code>out</code>. 
    * @param sampleTime system nano time associated with the samples.
    */
-  public void processBuffer(DoubleStream input, StereoOut out, long sampleTime) {
+  public void processBuffer(Observable<Double> input, StereoOut out, long sampleTime) {
     sniffedList.reset();
     toneSelector.forTime(sampleTime)
-      .with(input)
-      .peek(sniffedList::add)
-      .map(track::mix)
-
-      .forEach(out::putSample);
+      .applyTo(input)
+            .map(track::mix)
+            .doOnNext(sniffedList::add)
+            .forEach(out::putSample);
 
     sniffer.accept(sniffed, sampleTime);
   }

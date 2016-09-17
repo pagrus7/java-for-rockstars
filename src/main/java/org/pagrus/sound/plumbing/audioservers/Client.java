@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import org.jaudiolibs.audioservers.AudioClient;
 import org.jaudiolibs.audioservers.AudioConfiguration;
 import org.pagrus.sound.SoundProcessor;
+import rx.Observable;
 
 public class Client implements AudioClient {
   int bufferSize;
@@ -32,10 +33,12 @@ public class Client implements AudioClient {
 
     FloatBuffer input = inputs.get(0);
     input.get(buffer);
+    Double[] inputAsDouble = new Double[buffer.length];
+    for (int i = 0; i < buffer.length; i++) {
+      inputAsDouble[i] = new Double(buffer[i]);
+    }
 
-
-    DoubleStream doubleStream = IntStream.range(0, bufferSize).mapToDouble(i -> buffer[i]);
-    soundProcessor.processBuffer(doubleStream, out, TimeUnit.SECONDS.toNanos(1) / AudioServersSoundSystem.SAMPLING_RATE * frameCounter);
+    soundProcessor.processBuffer(Observable.from(inputAsDouble), out, TimeUnit.SECONDS.toNanos(1) / AudioServersSoundSystem.SAMPLING_RATE * frameCounter);
     frameCounter += nframes;
 
     return true;

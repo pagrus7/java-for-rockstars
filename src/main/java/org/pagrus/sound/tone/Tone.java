@@ -1,7 +1,7 @@
 package org.pagrus.sound.tone;
 
-import java.util.stream.DoubleStream;
+import rx.Observable;
 
 public interface Tone {
-  public DoubleStream with(DoubleStream input);
+  public Observable<Double> applyTo(Observable<Double> input);
 }

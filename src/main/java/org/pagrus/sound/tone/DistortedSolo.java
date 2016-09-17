@@ -6,6 +6,7 @@ import org.pagrus.sound.effects.Amplifier;
 import org.pagrus.sound.effects.ClippingDistorion;
 import org.pagrus.sound.effects.Delay;
 import org.pagrus.sound.effects.Normalizer;
+import rx.Observable;
 
 public class DistortedSolo implements Tone {
 
@@ -16,7 +17,7 @@ public class DistortedSolo implements Tone {
 
 
   @Override
-  public DoubleStream with(DoubleStream input) {
+  public Observable<Double> applyTo(Observable<Double> input) {
     return input
         .map(inNormalizer::apply)
         .map(distortion::apply)

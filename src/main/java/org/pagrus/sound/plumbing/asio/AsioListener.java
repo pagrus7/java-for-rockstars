@@ -8,6 +8,7 @@ import org.pagrus.sound.SoundProcessor;
 import org.pagrus.sound.plumbing.StereoOut;
 
 import com.synthbot.jasiohost.AsioChannel;
+import rx.Observable;
 
 public class AsioListener extends EmptyAsioDriverListener {
   private AsioChannel inputChannel;
@@ -29,12 +30,13 @@ public class AsioListener extends EmptyAsioDriverListener {
 
   @Override
   public void bufferSwitch(long sampleTime, long samplePosition, Set<AsioChannel> activeChannels) {
-    
-
     inputChannel.read(inputSamples);
-    DoubleStream stream = IntStream.range(0, bufferSize).mapToDouble(i -> inputSamples[i]);
+    Double[] inputAsDouble = new Double[inputSamples.length];
+    for (int i = 0; i < inputSamples.length; i++) {
+      inputAsDouble[i] = new Double(inputSamples[i]);
+    }
 
-    soundProcessor.processBuffer(stream, stereoOut, sampleTime);
+    soundProcessor.processBuffer(Observable.from(inputAsDouble), stereoOut, sampleTime);
   }
 
   @Override
