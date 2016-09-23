@@ -7,10 +7,7 @@ import java.util.stream.DoubleStream;
 import org.pagrus.sound.effects.SoundFileReader;
 import org.pagrus.sound.effects.SoundMixer;
 import org.pagrus.sound.plumbing.StereoOut;
-import org.pagrus.sound.tone.CleanRythm;
-import org.pagrus.sound.tone.DistortedSolo;
-import org.pagrus.sound.tone.OverTimeSelector;
-import org.pagrus.sound.tone.Tone;
+import org.pagrus.sound.tone.*;
 
 import gnu.trove.list.array.TDoubleArrayList;
 
@@ -22,18 +19,27 @@ public class SoundProcessor {
   private TDoubleArrayList sniffedList;
 
   private OverTimeSelector<Tone> toneSelector;
-  private SoundMixer track = new SoundMixer(1.0, 1.0, 
-      SoundFileReader.INSTANCE.readAsArray(System.getenv("HOME") + "/personal/music/collection/nickelback-rockstar-fragment.mp3"));
+  private SoundMixer track = new SoundMixer(2.0, 1.0,
+      SoundFileReader.INSTANCE.readAsArray("/Java4Rock/repo/java-for-rockstars/src/main/resources/backing-lw-lg-cs-sec-1.mp3"));
 
   public SoundProcessor() {
     updateBufferSize(DEFAULT_BUFFER_SIZE);
 
     Tone clean = new CleanRythm();
-    Tone distorted = new DistortedSolo();
+    Tone cleanFlanger = new CleanFlanger();
+    Tone delayWithLittleDistortion = new SlightDistortionWithDelay();
+    Tone slightDistortion = new SlightDistortion();
+    Tone bigDistortion = new BigDistortion();
+    Tone bigDistortionWithReverb = new BigDistortionWithReverb();
     toneSelector = OverTimeSelector
         .startWith(clean)
-        .thenAt(Duration.parse("PT14.1S"), distorted)
-        .thenAt(Duration.parse("PT46.7S"), clean)
+        .thenAt(Duration.parse("PT25.1S"), cleanFlanger)
+        .thenAt(Duration.parse("PT69.2S"), delayWithLittleDistortion)
+        .thenAt(Duration.parse("PT98.5S"), slightDistortion)
+        .thenAt(Duration.parse("PT133.7S"), bigDistortion)
+        .thenAt(Duration.parse("PT193.1S"), bigDistortionWithReverb)
+        .thenAt(Duration.parse("PT217S"), slightDistortion)
+        .thenAt(Duration.parse("PT274.5S"), delayWithLittleDistortion)
         .build();
   }
 
