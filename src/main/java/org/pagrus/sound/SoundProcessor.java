@@ -29,7 +29,7 @@ public class SoundProcessor {
 
   private OverTimeSelector<Tone> toneSelector;
   private SoundMixer track = new SoundMixer(1.0, 1.0,
-      SoundFileReader.INSTANCE.readAsArray("/Java4Rock/repo/java-for-rockstars/src/main/resources/backing-lw-lg-cs-sec-1.mp3"));
+      SoundFileReader.INSTANCE.readAsArray(SoundProcessor.class.getResource("/backing-lw-lg-cs-sec-1.mp3").getFile()));
 
   public SoundProcessor() {
     updateBufferSize(DEFAULT_BUFFER_SIZE);
