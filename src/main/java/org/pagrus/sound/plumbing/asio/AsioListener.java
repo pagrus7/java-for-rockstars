@@ -1,6 +1,7 @@
 package org.pagrus.sound.plumbing.asio;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
@@ -10,8 +11,11 @@ import org.pagrus.sound.plumbing.StereoOut;
 import com.synthbot.jasiohost.AsioChannel;
 
 public class AsioListener extends EmptyAsioDriverListener {
+  private static final long SAMPLE_RATE = 44100L;
   private AsioChannel inputChannel;
   private StereoOut stereoOut;
+
+  private long bufferCounter;
 
   private float[] inputSamples;
   private SoundProcessor soundProcessor;
@@ -33,8 +37,9 @@ public class AsioListener extends EmptyAsioDriverListener {
 
     inputChannel.read(inputSamples);
     DoubleStream stream = IntStream.range(0, bufferSize).mapToDouble(i -> inputSamples[i]);
+    long estimatedSampleTimeNanos = bufferCounter++  * bufferSize  * TimeUnit.SECONDS.toNanos(1) / SAMPLE_RATE;
 
-    soundProcessor.processBuffer(stream, stereoOut, sampleTime);
+    soundProcessor.processBuffer(stream, stereoOut, estimatedSampleTimeNanos);
   }
 
   @Override

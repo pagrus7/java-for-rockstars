@@ -9,7 +9,7 @@ public class CleanRythm implements Tone {
 
   @Override
   public DoubleStream with(DoubleStream input) {
-    return input;
+    return input.map(i -> i * 6);
   }
 
 }

@@ -17,6 +17,15 @@ public class SoundProcessor {
   private BiConsumer<double[], Long> sniffer = (d, t) -> {};
   private double[] sniffed;
   private TDoubleArrayList sniffedList;
+  Tone bigDistortionWithReverb = new BigDistortionWithReverb();
+  Tone slightDistortion = new SlightDistortion();
+
+  Tone clean = new CleanRythm();
+  Tone cleanFlanger = new CleanFlanger();
+  Tone delayWithLittleDistortion = new SlightDistortionWithDelay();
+
+  Tone bigDistortion = new BigDistortion();
+
 
   private OverTimeSelector<Tone> toneSelector;
   private SoundMixer track = new SoundMixer(2.0, 1.0,
@@ -25,22 +34,19 @@ public class SoundProcessor {
   public SoundProcessor() {
     updateBufferSize(DEFAULT_BUFFER_SIZE);
 
-    Tone clean = new CleanRythm();
-    Tone cleanFlanger = new CleanFlanger();
-    Tone delayWithLittleDistortion = new SlightDistortionWithDelay();
-    Tone slightDistortion = new SlightDistortion();
-    Tone bigDistortion = new BigDistortion();
-    Tone bigDistortionWithReverb = new BigDistortionWithReverb();
     toneSelector = OverTimeSelector
         .startWith(clean)
         .thenAt(Duration.parse("PT25.1S"), cleanFlanger)
-        .thenAt(Duration.parse("PT69.2S"), delayWithLittleDistortion)
-        .thenAt(Duration.parse("PT98.5S"), slightDistortion)
+        .thenAt(Duration.parse("PT69.2S"), slightDistortion)
+            // todo delay + distortion
+        .thenAt(Duration.parse("PT98.5S"), delayWithLittleDistortion)
         .thenAt(Duration.parse("PT133.7S"), bigDistortion)
         .thenAt(Duration.parse("PT193.1S"), bigDistortionWithReverb)
         .thenAt(Duration.parse("PT217S"), slightDistortion)
         .thenAt(Duration.parse("PT274.5S"), delayWithLittleDistortion)
         .build();
+
+    toneSelector.print();
   }
 
   /**
@@ -51,13 +57,18 @@ public class SoundProcessor {
     sniffedList = TDoubleArrayList.wrap(sniffed);
   }
 
+  int tmp = 0;
   /**
    * Process a stream of input samples and write results to<code>out</code>. 
    * @param sampleTime system nano time associated with the samples.
    */
   public void processBuffer(DoubleStream input, StereoOut out, long sampleTime) {
     sniffedList.reset();
-    toneSelector.forTime(sampleTime)
+    Tone tone = toneSelector.forTime(sampleTime);
+    if(tmp++ % 10 == 0) {
+      System.out.println(sampleTime + " -> " + tone);
+    }
+    tone
       .with(input)
       .peek(sniffedList::add)
       .map(track::mix)

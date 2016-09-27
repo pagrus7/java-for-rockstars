@@ -33,6 +33,13 @@ public class OverTimeSelector<T> {
     return new Builder<T>(initial);
   }
 
+  public void print() {
+    System.out.println(currentIndex);
+    for(int i=0; i<switchPoints.length;i++) {
+      System.out.println(switchPoints[i] + " -> " + objects[i]);
+    }
+  }
+
   public static class Builder<T> {
     private Map<Long, T> objectMap = new TreeMap<>();
     private T initialTone;
