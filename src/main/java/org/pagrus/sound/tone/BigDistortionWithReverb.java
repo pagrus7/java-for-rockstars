@@ -8,12 +8,12 @@ import java.util.stream.DoubleStream;
 
 public class BigDistortionWithReverb extends BigDistortion {
 
-  Delay delay = new Delay(100, 1d, 0.5);
-  Delay secondWave = new Delay(200, 1d, 0.2);
+  Delay delay = new Delay(300, 1d, 0.5);
+  Delay secondWave = new Delay(600, 1d, 0.2);
 
   Amplifier preamp = new Amplifier(7);
   ClippingDistorion distorion = new ClippingDistorion(0.05, 0.05, 1);
-  Amplifier postamp = new Amplifier(4);
+  Amplifier postamp = new Amplifier(3);
 
   @Override
   public DoubleStream with(DoubleStream input) {

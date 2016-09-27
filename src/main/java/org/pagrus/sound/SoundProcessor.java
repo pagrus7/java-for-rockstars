@@ -28,7 +28,7 @@ public class SoundProcessor {
 
 
   private OverTimeSelector<Tone> toneSelector;
-  private SoundMixer track = new SoundMixer(2.0, 1.0,
+  private SoundMixer track = new SoundMixer(1.0, 1.0,
       SoundFileReader.INSTANCE.readAsArray("/Java4Rock/repo/java-for-rockstars/src/main/resources/backing-lw-lg-cs-sec-1.mp3"));
 
   public SoundProcessor() {
@@ -37,9 +37,10 @@ public class SoundProcessor {
     toneSelector = OverTimeSelector
         .startWith(clean)
         .thenAt(Duration.parse("PT25.1S"), cleanFlanger)
-        .thenAt(Duration.parse("PT69.2S"), slightDistortion)
+        .thenAt(Duration.parse("PT36.2S"), slightDistortion)
+        .thenAt(Duration.parse("PT69.2S"), delayWithLittleDistortion)
             // todo delay + distortion
-        .thenAt(Duration.parse("PT98.5S"), delayWithLittleDistortion)
+        .thenAt(Duration.parse("PT98.5S"), slightDistortion)
         .thenAt(Duration.parse("PT133.7S"), bigDistortion)
         .thenAt(Duration.parse("PT193.1S"), bigDistortionWithReverb)
         .thenAt(Duration.parse("PT217S"), slightDistortion)

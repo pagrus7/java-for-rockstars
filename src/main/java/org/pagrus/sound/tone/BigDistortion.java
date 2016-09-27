@@ -10,7 +10,7 @@ public class BigDistortion implements Tone{
 
   Amplifier preamp = new Amplifier(7);
   ClippingDistorion distorion = new ClippingDistorion(0.05, 0.05, 1);
-  Amplifier postamp = new Amplifier(4);
+  Amplifier postamp = new Amplifier(3);
 
   @Override
   public DoubleStream with(DoubleStream input) {
