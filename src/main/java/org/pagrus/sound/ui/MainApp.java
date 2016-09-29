@@ -37,8 +37,6 @@ public class MainApp extends Application {
 
     styleSelector = OverTimeSelector
         .<Consumer<Canvas>> startWith(regularStyle)
-        .thenAt(Duration.parse("PT14.3S"), motionBlurStyle)
-        .thenAt(Duration.parse("PT27.7S"), perspectiveAndBlurStyle)
         .build();
   }
 

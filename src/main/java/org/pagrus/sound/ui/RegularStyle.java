@@ -12,8 +12,8 @@ public class RegularStyle implements Consumer<Canvas>{
   public void accept(Canvas canvas) {
     canvas.setEffect(null);
     GraphicsContext g = canvas.getGraphicsContext2D();
-    g.setFill(Color.WHITE);
-    g.setStroke(Color.GREEN);
+    g.setFill(Color.BLACK);
+    g.setStroke(Color.WHITE);
   }
 
 }
