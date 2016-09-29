@@ -47,7 +47,6 @@ public class SoundProcessor {
         .thenAt(Duration.parse("PT274.5S"), delayWithLittleDistortion)
         .build();
 
-    toneSelector.print();
   }
 
   /**
@@ -58,7 +57,6 @@ public class SoundProcessor {
     sniffedList = TDoubleArrayList.wrap(sniffed);
   }
 
-  int tmp = 0;
   /**
    * Process a stream of input samples and write results to<code>out</code>. 
    * @param sampleTime system nano time associated with the samples.
@@ -66,9 +64,6 @@ public class SoundProcessor {
   public void processBuffer(DoubleStream input, StereoOut out, long sampleTime) {
     sniffedList.reset();
     Tone tone = toneSelector.forTime(sampleTime);
-    if(tmp++ % 10 == 0) {
-      System.out.println(sampleTime + " -> " + tone);
-    }
     tone
       .with(input)
       .peek(sniffedList::add)
