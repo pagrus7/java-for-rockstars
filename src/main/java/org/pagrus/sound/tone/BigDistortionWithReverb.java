@@ -15,7 +15,7 @@ public class BigDistortionWithReverb extends BigDistortion {
   Amplifier preamp = new Amplifier(7);
   Normalizer normalizer = new Normalizer(1);
   ClippingDistorion distorion = new ClippingDistorion(0.05, 0.05, 1);
-  Amplifier postamp = new Amplifier(1.5);
+  Amplifier postamp = new Amplifier(1.6);
 
   @Override
   public DoubleStream with(DoubleStream input) {
