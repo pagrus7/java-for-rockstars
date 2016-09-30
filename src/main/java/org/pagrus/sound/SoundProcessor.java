@@ -39,7 +39,7 @@ public class SoundProcessor {
         .thenAt(Duration.parse("PT101.5S"), slightDistortionWithDelay)
         .thenAt(Duration.parse("PT133.6S"), bigDistortion)
         .thenAt(Duration.parse("PT155.9S"), bigDistortionWithReverb)
-            .thenAt(Duration.parse("PT184.0S"), bigDistortionWithReverb)
+        .thenAt(Duration.parse("PT184.0S"), clean)
         .build();
 
   }
