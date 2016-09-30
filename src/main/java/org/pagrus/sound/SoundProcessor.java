@@ -34,8 +34,8 @@ public class SoundProcessor {
 
     toneSelector = OverTimeSelector
         .startWith(clean)
-        .thenAt(Duration.parse("PT57.5S") ,  cleanFlanger)
-        .thenAt(Duration.parse("PT58.5S") ,  cleanDelay)
+        .thenAt(Duration.parse("PT57.5S") , cleanFlanger)
+        .thenAt(Duration.parse("PT67.0S") , cleanDelay)
         .thenAt(Duration.parse("PT101.5S"), slightDistortionWithDelay)
         .thenAt(Duration.parse("PT133.6S"), bigDistortion)
         .thenAt(Duration.parse("PT155.9S"), bigDistortionWithReverb)
