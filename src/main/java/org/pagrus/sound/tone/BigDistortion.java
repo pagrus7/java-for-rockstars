@@ -10,9 +10,9 @@ import java.util.stream.DoubleStream;
 public class BigDistortion implements Tone{
 
   Amplifier preamp = new Amplifier(7);
-  Normalizer normalizer = new Normalizer(0.9);
+  Normalizer normalizer = new Normalizer(1);
   ClippingDistorion distorion = new ClippingDistorion(0.05, 0.05, 1);
-  Amplifier postamp = new Amplifier(3);
+  Amplifier postamp = new Amplifier(1.7);
 
   @Override
   public DoubleStream with(DoubleStream input) {

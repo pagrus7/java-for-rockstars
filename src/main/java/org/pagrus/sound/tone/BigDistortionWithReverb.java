@@ -13,9 +13,9 @@ public class BigDistortionWithReverb extends BigDistortion {
   Delay secondWave = new Delay(600, 1d, 0.2);
 
   Amplifier preamp = new Amplifier(7);
-  Normalizer normalizer = new Normalizer(0.9);
+  Normalizer normalizer = new Normalizer(1);
   ClippingDistorion distorion = new ClippingDistorion(0.05, 0.05, 1);
-  Amplifier postamp = new Amplifier(3);
+  Amplifier postamp = new Amplifier(1.5);
 
   @Override
   public DoubleStream with(DoubleStream input) {

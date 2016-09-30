@@ -9,7 +9,7 @@ import java.util.stream.DoubleStream;
 
 public class CleanFlanger implements Tone {
   private Flanger flanger = new Flanger(4, 1 ,2, 0.5, 0.5);
-  private Amplifier preamp = new Amplifier(6);
+  private Amplifier preamp = new Amplifier(7);
 
   @Override
   public DoubleStream with(DoubleStream input) {

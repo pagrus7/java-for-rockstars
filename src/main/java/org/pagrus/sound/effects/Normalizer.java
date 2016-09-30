@@ -6,7 +6,7 @@ import static java.lang.Math.signum;
 
 public class Normalizer {
   private static final int BUFFER_SIZE = 1160;
-  private static final double LOWER_THRESHOLD = 0.002;
+  private static final double LOWER_THRESHOLD = 0.08;
   private static final double AMPLIFICATION_FACTOR_INCREASE_STEP = 0.01;
 
   private double desiredAmplitude;
