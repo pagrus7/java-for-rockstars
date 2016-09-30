@@ -9,7 +9,7 @@ import java.util.stream.DoubleStream;
 public class SlightDistortionWithDelay implements Tone {
 
   Amplifier preamp = new Amplifier(7);
-  ClippingDistorion distorion = new ClippingDistorion(0.14, 0.05, 1);
+  ClippingDistorion distorion = new ClippingDistorion(0.2, 0.05, 1);
 
   Delay delay = new Delay(30, 1d, 0.5);
   Amplifier postamp = new Amplifier(2);
